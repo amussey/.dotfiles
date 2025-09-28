@@ -124,3 +124,17 @@ if grep -qEi "(Microsoft|WSL)" /proc/version &> /dev/null ; then
     alias pbcopy="clip.exe"
     export PATH=$HOME/bin:$PATH
 fi
+
+
+export PYENV_ROOT="$HOME/.pyenv"
+export PATH="$PYENV_ROOT/bin:$PATH"
+eval "$(pyenv init --path)"
+eval "$(pyenv init -)"
+eval "$(pyenv virtualenv-init -)"
+
+function vls {
+    VENV_VERS=3.12.11
+    VENV_NAME=$(basename $(pwd))
+    pyenv virtualenv ${1:-${VENV_VERS}} ${VENV_NAME}
+    pyenv local ${VENV_NAME}
+}
