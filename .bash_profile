@@ -58,3 +58,16 @@ source bash/git-completion.bash
 function onport() {
     sudo lsof -i :$1
 }
+
+# Pyenv init and shortcut functions.
+export PYENV_ROOT="$HOME/.pyenv"
+[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
+eval "$(pyenv init - bash)"
+eval "$(pyenv virtualenv-init -)"
+
+function vls {
+    VENV_VERS=3.12.11
+    VENV_NAME=$(basename $(pwd))
+    pyenv virtualenv ${1:-${VENV_VERS}} ${VENV_NAME}
+    pyenv local ${VENV_NAME}
+}

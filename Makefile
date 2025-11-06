@@ -29,7 +29,7 @@ ifeq ($(UNAME), Darwin)
 	brew install apktool
 endif
 
-aws: ## OS: Install tools helpful for working with AWS.
+aws: ## OSX: Install tools helpful for working with AWS.
 ifeq ($(UNAME), Darwin)
 	brew install awscli
 	brew install --cask aws-vpn-client
@@ -90,6 +90,14 @@ ifeq ($(UNAME), Darwin)
 	brew install tcl-tk
 	brew install python --use-brewed-tk
 	brew install python3 --use-brewed-tk
+endif
+
+pyenv: ## Install pyenv
+ifeq ($(UNAME), Darwin)
+	brew install pyenv --head
+endif
+ifeq ($(UNAME), Linux)
+	curl -fsSL https://pyenv.run | bash
 endif
 
 photos: ## OSX: Stop Photos from automatically opening when an SD card is plugged in.
