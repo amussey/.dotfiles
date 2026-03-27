@@ -1,4 +1,5 @@
 SHELL = /bin/bash
+OS_ID := $(shell grep -E '^ID=' /etc/os-release | cut -d '=' -f 2 | tr -d '"')
 UNAME := $(shell uname)
 ARCH := $(shell uname -m)
 WSL_UNAME := $(shell grep -qEi "(Microsoft|WSL)" /proc/version &> /dev/null && echo "WSL-$$(uname)" || uname)
@@ -168,7 +169,6 @@ ifeq ($(UNAME), Darwin)
 endif
 
 games: brew
-
 	brew install --cask steam
 
 common_packages: brew
@@ -194,21 +194,38 @@ ifeq ($(UNAME), Darwin)
 	brew install --cask tunnelblick
 	brew install --cask text-bar
 	brew install --cask vnc-viewer
-endif
-ifeq ($(UNAME), Linux)
+else ifeq ($(UNAME), Linux)
+ifeq ($(OS_ID), ubuntu)
 	apt-get update
-	apt-get install \
+	apt-get install -y \
 		build-essential \
 		curl \
 		git \
 		htop \
-		lsb_release \
+		lsb-release \
 		make \
 		software-properties-common \
 		wget \
-		python-pip \
-		python3-pip \
-		;
+		python3-pip
+else ifeq ($(OS_ID), fedora)
+	dnf install \
+		https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$$(rpm -E %fedora).noarch.rpm \
+		https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$$(rpm -E %fedora).noarch.rpm
+	dnf update -y
+	dnf install -y \
+		@development-tools \
+		curl \
+		git \
+		htop \
+		make \
+		dnf-plugins-core \
+		wget \
+		python3-pip
+	dnf copr enable scottames/ghostty
+	dnf install ghostty
+else
+	@echo "Unsupported Linux distribution: $(OS_ID)"
+endif
 endif
 
 # Common packages for Macs.
@@ -233,3 +250,9 @@ help: ## This help dialog.
 	    help_info=`echo $${help_split[2]} | sed -e 's/^ *//' -e 's/ *$$//'` ; \
 	    printf "  %-40s %s\n" $$help_command $$help_info ; \
 	done
+
+	echo -e "\nThis host is running:"
+	echo -e "    OS:        $(OS_ID)"
+	echo -e "    UNAME:     $(UNAME)"
+	echo -e "    WSL_UNAME: $(WSL_UNAME)"
+	echo -e "    ARCH:      $(ARCH)"
