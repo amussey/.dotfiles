@@ -5,6 +5,10 @@ ARCH := $(shell uname -m)
 WSL_UNAME := $(shell grep -qEi "(Microsoft|WSL)" /proc/version &> /dev/null && echo "WSL-$$(uname)" || uname)
 RUNTIME := $(shell date '+%Y-%m-%d_%H-%M-%S')
 
+ifneq ($(realpath $(CURDIR)),$(realpath $(HOME)/.dotfiles))
+$(warning $(shell printf '\033[33mWarning: This Makefile is not being run from ~/.dotfiles/\033[0m'))
+endif
+
 .PHONY: limechat
 
 keybindings:  ## OSX: Update the keybindings to better match Windows.
@@ -61,6 +65,7 @@ git: ## Set my default git config.
 	git config --global push.default current
 
 zsh: zshrc_files
+zsh: ## Install ZSH and configure it to source the .zshrc file in this repository.
 ifeq ($(UNAME), Darwin)
 	command -v zsh >/dev/null 2>&1 || { echo "ZSH already installed and configured."; exit 1; }
 	brew install zsh
@@ -68,10 +73,20 @@ endif
 ifeq ($(UNAME), Linux)
 	sudo apt-get install zsh
 endif
+	@if grep -qF 'source $$HOME/.dotfiles/.zshrc' ~/.zshrc 2>/dev/null; then \
+		echo "~/.zshrc already sources ~/.dotfiles/.zshrc"; \
+	else \
+		echo '' >> ~/.zshrc; \
+		echo '# Load dotfiles zshrc' >> ~/.zshrc; \
+		echo 'source $$HOME/.dotfiles/.zshrc' >> ~/.zshrc; \
+		echo "Added source line to ~/.zshrc"; \
+	fi
+
+prezto: ## Configure the Prezto ZSH configuration framework.
+prezto: zsh
 	git clone --recursive https://github.com/sorin-ionescu/prezto.git "$${ZDOTDIR:-$${HOME}}/.zprezto"
 	cp ./.zprezto/modules/prompt/functions/prompt_amussey_setup ~/.zprezto/modules/prompt/functions/prompt_amussey_setup
 	cp ./.zpreztorc ~/.zpreztorc
-	cp ./.zshrc ~/.zshrc
 
 sublime: brew
 ifeq ($(UNAME), Darwin)
