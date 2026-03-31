@@ -4,7 +4,9 @@
 unset SSH_AUTH_SOCK
 # Source Prezto.
 if [[ -s "${ZDOTDIR:-$HOME}/.zprezto/init.zsh" ]]; then
-  source "${ZDOTDIR:-$HOME}/.zprezto/init.zsh"
+    source "${ZDOTDIR:-$HOME}/.zprezto/init.zsh"
+else
+    source ~/.dotfiles/.zshrc-files/basic_prompt.sh
 fi
 
 
