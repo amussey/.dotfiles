@@ -1,7 +1,7 @@
 SHELL = /bin/bash
-OS_ID := $(shell grep -E '^ID=' /etc/os-release | cut -d '=' -f 2 | tr -d '"')
 UNAME := $(shell uname)
 ARCH := $(shell uname -m)
+OS_ID := $(shell if [ -f /etc/os-release ]; then grep -E '^ID=' /etc/os-release | cut -d '=' -f 2 | tr -d '"'; elif [ "$(UNAME)" = "Darwin" ]; then echo "MacOS"; fi)
 WSL_UNAME := $(shell grep -qEi "(Microsoft|WSL)" /proc/version &> /dev/null && echo "WSL-$$(uname)" || uname)
 RUNTIME := $(shell date '+%Y-%m-%d_%H-%M-%S')
 
