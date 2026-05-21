@@ -4,6 +4,7 @@ ARCH := $(shell uname -m)
 OS_ID := $(shell if [ -f /etc/os-release ]; then grep -E '^ID=' /etc/os-release | cut -d '=' -f 2 | tr -d '"'; elif [ "$(UNAME)" = "Darwin" ]; then echo "MacOS"; fi)
 WSL_UNAME := $(shell grep -qEi "(Microsoft|WSL)" /proc/version &> /dev/null && echo "WSL-$$(uname)" || uname)
 RUNTIME := $(shell date '+%Y-%m-%d_%H-%M-%S')
+GITCONFIG_ALIASES := ~/.dotfiles/git/config/aliases
 
 ifneq ($(realpath $(CURDIR)),$(realpath $(HOME)/.dotfiles))
 $(warning $(shell printf '\033[33mWarning: This Makefile is not being run from ~/.dotfiles/\033[0m'))
@@ -58,11 +59,21 @@ ifeq ($(UNAME), Darwin)
 	brew install --cask vagrant-manager
 endif
 
+git: gitconfig-aliases
 git: ## Set my default git config.
 	git config --global user.name "Andrew Mussey"
 	git config --global user.email "git@amussey.com"
 	# Push up the local branch
 	git config --global push.default current
+
+.PHONY: gitconfig-aliases
+gitconfig-aliases: ## Include dotfiles Git typo aliases in ~/.gitconfig.
+	@if git config --global --get-all include.path 2>/dev/null | grep -qxF '$(GITCONFIG_ALIASES)'; then \
+		echo "~/.gitconfig already includes $(GITCONFIG_ALIASES)"; \
+	else \
+		git config --global --add include.path '$(GITCONFIG_ALIASES)'; \
+		echo "Added $(GITCONFIG_ALIASES) to ~/.gitconfig"; \
+	fi
 
 zsh: zshrc_files
 zsh: ## Install ZSH and configure it to source the .zshrc file in this repository.

@@ -1,0 +1,49 @@
+# Git command typo aliases.
+#
+# Include this file from ~/.gitconfig with:
+# [include]
+#     path = ~/.dotfiles/git/config/aliases
+
+[alias]
+    # checkout
+    chekcout = checkout
+    chekout = checkout
+    checkuot = checkout
+    checout = checkout
+
+    # status
+    stauts = status
+    statsu = status
+    satatus = status
+    stats = status
+
+    # branch
+    brnach = branch
+    brach = branch
+
+    # commit
+    comit = commit
+    commmit = commit
+    cmomit = commit
+
+    # push/pull
+    psuh = push
+    pus = push
+    pul = pull
+    puhl = pull
+
+    # common porcelain
+    dif = diff
+    dsiff = diff
+    lgo = log
+    mreg = merge
+    megre = merge
+    reabse = rebase
+    rebsae = rebase
+    stahs = stash
+    satsh = stash
+    swtich = switch
+    swithc = switch
+    restroe = restore
+    resotre = restore
+    cherry-pik = cherry-pick
